@@ -1,0 +1,88 @@
+# Task 1: Iris Flower Classification (Method A - iris.py)
+
+import os
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+
+def main():
+    # ---------- Load dataset ----------
+    iris = load_iris()
+    X = iris.data
+    y = iris.target
+
+    feature_names = iris.feature_names
+    target_names = iris.target_names
+
+    # Create a DataFrame for easy viewing (EDA)
+    df = pd.DataFrame(X, columns=feature_names)
+    df["species"] = [target_names[i] for i in y]
+
+    print("Dataset shape:", df.shape)
+    print("\nFirst 5 rows:")
+    print(df.head())
+
+    print("\nClass counts:")
+    print(df["species"].value_counts())
+
+    # ---------- Plot (scatter) ----------
+    # Petal length vs Petal width
+    os.makedirs("outputs", exist_ok=True)
+
+    petal_length_col = "petal length (cm)"
+    petal_width_col = "petal width (cm)"
+
+    plt.figure()
+    for cls_idx, cls_name in enumerate(target_names):
+        subset = df[df["species"] == cls_name]
+        plt.scatter(subset[petal_length_col], subset[petal_width_col], label=cls_name)
+
+    plt.xlabel(petal_length_col)
+    plt.ylabel(petal_width_col)
+    plt.title("Iris Dataset: Petal Length vs Petal Width")
+    plt.legend()
+
+    plot_path = os.path.join("outputs", "iris_scatter.png")
+    plt.savefig(plot_path, dpi=200, bbox_inches="tight")
+    plt.close()
+
+    print(f"\nSaved scatter plot to: {plot_path}")
+
+    # ---------- Train-test split ----------
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42, stratify=y
+    )
+
+    # ---------- Train model (KNN) ----------
+    k = 5
+    model = KNeighborsClassifier(n_neighbors=k)
+    model.fit(X_train, y_train)
+
+    # ---------- Predict & Evaluate ----------
+    y_pred = model.predict(X_test)
+
+    acc = accuracy_score(y_test, y_pred)
+    cm = confusion_matrix(y_test, y_pred)
+    report = classification_report(y_test, y_pred, target_names=target_names)
+
+    print("\nModel: K-Nearest Neighbors (k=5)")
+    print("Accuracy:", acc)
+    print("\nConfusion Matrix:\n", cm)
+    print("\nClassification Report:\n", report)
+
+    # ---------- Single prediction demo ----------
+    sample = X_test[0].reshape(1, -1)
+    pred_class = model.predict(sample)[0]
+    print("\nDemo prediction:")
+    print("Sample features:", X_test[0])
+    print("Predicted species:", target_names[pred_class])
+
+
+if __name__ == "__main__":
+    main()
