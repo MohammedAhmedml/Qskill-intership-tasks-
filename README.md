@@ -1,25 +1,34 @@
-Iris Flower Classification (KNN)
+Spam Mail Detector (TF-IDF + Naive Bayes)
 
 Objective
-Build a machine learning model to classify Iris flowers into three species (setosa, versicolor, virginica) using sepal and petal measurements.
+Build a text classification model to detect whether an SMS message is spam or ham (not spam).
 
 Dataset
-Scikit-learn built-in Iris dataset (sklearn.datasets.load_iris) containing 150 samples, 4 numeric features, and 3 classes.
+SMS Spam Collection dataset (UCI). The dataset contains 5,572 messages with two columns:
+- label: ham/spam
+- message: SMS text
 
 Method / Workflow
-1. Loaded the Iris dataset and created a DataFrame for basic exploration (EDA).
-2. Displayed sample rows and checked class distribution.
-3. Visualized the dataset using a scatter plot of petal length vs petal width and saved it to outputs/iris_scatter.png.
-4. Split the dataset into training and testing sets (80/20) using stratified sampling.
-5. Trained a K-Nearest Neighbors classifier with k = 5.
-6. Evaluated the model using accuracy, confusion matrix, and classification report.
-7. Performed a demo prediction on one test sample.
+1. Loaded the dataset (tab-separated: label and message).
+2. Split the data into training and testing sets (80/20) using stratified sampling.
+3. Converted text into numerical features using TF-IDF vectorization.
+4. Trained a Multinomial Naive Bayes classifier on the TF-IDF vectors.
+5. Evaluated the model using accuracy, confusion matrix, and classification report.
+6. Saved the confusion matrix plot to outputs/confusion_matrix.png.
+7. Tested the model on a few custom demo messages.
 
 Results
-- Model: K-Nearest Neighbors (k=5)
-- Accuracy: 1.00
-- Confusion matrix and classification report were printed in the terminal output.
+- Model: TF-IDF + Multinomial Naive Bayes
+- Accuracy: 0.9722 (~97.22%)
+- Confusion Matrix [ham, spam]:
+  [[966, 0],
+   [31, 118]]
+- The classification report was printed in the terminal.
 
 How to Run
 1. Install dependencies: pip install pandas numpy matplotlib scikit-learn
-2. Run the script: python iris.py
+2. Place dataset file in: data/SMSSpamCollection
+3. Run the script: python spam.py
+
+Output Files
+- outputs/confusion_matrix.png
